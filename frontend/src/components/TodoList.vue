@@ -1,7 +1,7 @@
 <template>
   <div class="list">
     <div
-      v-for="task in list"
+      v-for="task in listToShow"
       :key="task.id"
       class="item-wrapper"
     >
@@ -11,7 +11,10 @@
       <button class="btn edit-btn">
         編集する
       </button>
-      <button class="btn complete-btn">
+      <button
+        class="btn complete-btn"
+        @click="complete(task.id)"
+      >
         完了
       </button>
     </div>
@@ -27,23 +30,26 @@
 </template>
 
 <script>
+const STATUS_TODO = 0 // 未完了
+const STATUS_DONE = 1 // 完了
+
 const DUMMY_LIST = [
   {
     id: 1,
     name: 'タスク1',
-    status: 0, // 0: 未完了, 1: 完了
+    status: STATUS_TODO,
   },
   {
     id: 2,
     name: 'タスク2',
-    status: 0, // 0: 未完了, 1: 完了
+    status: STATUS_TODO,
   },
   {
     id: 3,
     name: 'タスク3',
-    status: 0, // 0: 未完了, 1: 完了
+    status: STATUS_TODO,
   },
-];
+]
 
 export default {
   name: 'TodoList',
@@ -57,8 +63,11 @@ export default {
 
   computed: {
     nextId () {
-      return Math.max(this.list.map(l => l.id))
+      return Math.max(...this.list.map(l => l.id)) + 1
     },
+    listToShow () {
+      return this.list.filter(l => l.status === STATUS_TODO);
+    }
   },
 
   methods: {
@@ -66,14 +75,19 @@ export default {
       if (!this.addInputText) {
         return;
       }
+
       this.list.push({
         id: this.nextId,
         name: this.addInputText,
-        status: 0,
+        status: STATUS_TODO,
       })
 
       this.addInputText = ''
     },
+    complete(id) {
+      // $setしなくても反映されるようになった？
+      this.list.find(l => l.id === id).status = STATUS_DONE;
+    }
   },
 }
 </script>
