@@ -1,5 +1,6 @@
 FRONTEND_CONTAINER_NAME := frontend
 BACKEND_CONTAINER_NAME := backend
+DB_CONTAINER_NAME := db
 
 .PHONY: up
 up:
@@ -21,6 +22,10 @@ f-sh:
 b-sh:
 	docker-compose exec ${BACKEND_CONTAINER_NAME} sh
 
+.PHONY: d-sh
+d-sh:
+	docker-compose exec ${DB_CONTAINER_NAME} sh
+
 .PHONY: yarn
 yarn:
 	docker-compose exec ${FRONTEND_CONTAINER_NAME} sh -c "yarn && yarn dev"
@@ -28,6 +33,10 @@ yarn:
 .PHONY: run-hello-world
 run-hello-world:
 	docker-compose exec ${BACKEND_CONTAINER_NAME} sh -c "go install hello_world && ../bin/hello_world"
+
+.PHONY: db-setup
+db-setup:
+	docker-compose exec ${DB_CONTAINER_NAME} sh -c "mysql sample < ./sql/setup.sql"
 
 .PHONY: create-project
 create-project:
