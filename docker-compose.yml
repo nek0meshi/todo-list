@@ -9,3 +9,12 @@ services:
       - ./frontend:/frontend:cached
     tty: true
     working_dir: /frontend
+
+  backend:
+    image: golang:1-alpine
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend:/go/src:cached
+    tty: true
+    working_dir: /go/src
