@@ -11,11 +11,11 @@ services:
     working_dir: /frontend
 
   backend:
-    image: golang:1-alpine
+    build: ./docker/backend
     ports:
       - 8000:8000
     volumes:
-      - ./backend:/go/src:cached
+      - ./backend:/go/src/app:cached
     tty: true
     working_dir: /go/src
 
