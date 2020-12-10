@@ -2,55 +2,100 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"net/http"
 	"os"
+	"path"
+	"strconv"
 )
 
 type Task struct {
-	ID     int
+	Id     int
 	Name   string
 	Status int
 }
 
 var db *sql.DB
+var err error
 
-func dbSetup() {
-	var err error
+func dbSetup() (err error) {
 	db, err = sql.Open("mysql", "sample:sample@tcp(db:3306)/sample")
-	if err != nil {
-		panic(err.Error())
-	}
+	return
 }
 
-func load() string {
-	var task Task
-	var err error
-
-	err = db.QueryRow("SELECT * FROM tasks WHERE id = ?", 1).Scan(&task.ID, &task.Name, &task.Status)
+func getTask(id int) (task Task, err error) {
+	err = db.QueryRow("SELECT * FROM tasks WHERE id = ?", id).Scan(&task.Id, &task.Name, &task.Status)
 	switch {
 	case err == sql.ErrNoRows:
 		fmt.Println("レコードが存在しません")
-		return "empty"
+		return
 	case err != nil:
-		panic(err.Error())
+		return
 	default:
-		fmt.Println(task.ID, task.Name, task.Status)
-		return task.Name
+		fmt.Println(task.Id, task.Name, task.Status)
+	}
+	return
+}
+
+func handleGetDetail(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(path.Base(r.URL.Path))
+	w.Header().Set("Content-Type", "application/json")
+	task, err := getTask(id)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+	json, _ := json.Marshal(task)
+	w.Write(json)
+}
+
+func getTasks(limit int) (tasks []Task, err error) {
+	rows, err := db.Query("SELECT id, name, status FROM tasks limit ?", limit)
+	defer rows.Close()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	for rows.Next() {
+		task := Task{}
+		if err = rows.Scan(&task.Id, &task.Name, &task.Status); err != nil {
+			return
+		}
+		tasks = append(tasks, task)
+	}
+	return
+}
+
+func handleGetAll(w http.ResponseWriter, r *http.Request) (err error) {
+	tasks, err := getTasks(30)
+	json, _ := json.Marshal(tasks)
+	w.Write(json)
+	return
+}
+
+func handleRequest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var err error
+	switch r.Method {
+	case "GET":
+		err = handleGetAll(w, r)
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World! %s!", load())
-}
-
 func main() {
-	dbSetup()
+	_ = dbSetup()
 	// main() 終了時にDBをClseする.
 	defer db.Close()
 
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", handleRequest)
 
 	fmt.Fprintln(os.Stdout, "Listening...")
 	http.ListenAndServe(":8000", nil)
