@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import * as tasksApi from '../api/tasks'
+
 const STATUS_TODO = 0 // 未完了
 const STATUS_DONE = 1 // 完了
 
@@ -70,7 +72,19 @@ export default {
     }
   },
 
+  created() {
+    this.getAll()
+  },
+
   methods: {
+    async getAll() {
+      try {
+        const res = await tasksApi.getAll()
+        this.list = await res.json();
+      } catch (err) {
+        console.error(err)
+      }
+    },
     add() {
       if (!this.addInputText) {
         return;

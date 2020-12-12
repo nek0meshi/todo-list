@@ -12,9 +12,9 @@ import (
 )
 
 type Task struct {
-	Id     int
-	Name   string
-	Status int
+	Id     int    `json:"id"`
+	Name   string `json:"name"`
+	Status int    `json:"status"`
 }
 
 var db *sql.DB
@@ -41,7 +41,6 @@ func getTask(id int) (task Task, err error) {
 
 func handleGetDetail(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
-	w.Header().Set("Content-Type", "application/json")
 	task, err := getTask(id)
 	if err != nil {
 		w.WriteHeader(500)
@@ -78,6 +77,7 @@ func handleGetAll(w http.ResponseWriter, r *http.Request) (err error) {
 }
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	var err error
 	switch r.Method {
