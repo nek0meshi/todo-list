@@ -85,18 +85,20 @@ export default {
         console.error(err)
       }
     },
-    add() {
+    async add() {
       if (!this.addInputText) {
-        return;
+        return
       }
 
-      this.list.push({
-        id: this.nextId,
-        name: this.addInputText,
-        status: STATUS_TODO,
-      })
-
-      this.addInputText = ''
+      try {
+        const res = await tasksApi.store({
+          name: this.addInputText,
+        })
+        this.addInputText = ''
+        this.getAll()
+      } catch (err) {
+        console.error(err)
+      }
     },
     complete(id) {
       // $setしなくても反映されるようになった？
