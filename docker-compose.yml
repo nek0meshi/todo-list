@@ -11,10 +11,28 @@ services:
     working_dir: /frontend
 
   backend:
-    image: golang:1-alpine
+    build: ./docker/backend
     ports:
       - 8000:8000
     volumes:
-      - ./backend:/go/src:cached
+      - ./backend:/go/src/app:cached
     tty: true
     working_dir: /go/src
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sample
+      MYSQL_USER: sample
+      MYSQL_PASSWORD: sample
+      TZ: 'Asia/Tokyo'
+    command: mysqld
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      - ./environment/sql:/work/sql:ro
+    working_dir: /work
+
+volumes:
+  db-data:
