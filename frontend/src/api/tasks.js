@@ -8,3 +8,9 @@ export function store(data) {
     body: JSON.stringify(data),
   })
 }
+
+export function complete(id) {
+  return fetch('http://localhost:8000/tasks/' + id + '/complete', {
+    method: 'PUT',
+  })
+}

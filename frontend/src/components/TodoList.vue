@@ -82,10 +82,14 @@ export default {
         console.error(err)
       }
     },
-    complete(id) {
-      // $setしなくても反映されるようになった？
-      this.list.find(l => l.id === id).status = STATUS_DONE;
-    }
+    async complete(id) {
+      try {
+        const res = await tasksApi.complete(id)
+        this.getAll()
+      } catch (err) {
+        console.error(err)
+      }
+    },
   },
 }
 </script>

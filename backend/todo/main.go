@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"net/http"
@@ -54,7 +55,6 @@ func handleGetAll(c *gin.Context) {
 }
 
 func storeTask(name string) (err error) {
-	fmt.Println(name)
 	_, err = db.Exec("INSERT INTO tasks(name, status) VALUES (?, 0)", name)
 	return
 }
@@ -70,19 +70,35 @@ func handleStore(c *gin.Context) {
 	return
 }
 
-func corsMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "http://localhost:3000")
-		c.Next()
+func completeTask(id string) (err error) {
+	_, err = db.Exec("UPDATE tasks SET status = 1 WHERE id = ?", id)
+	return
+}
+
+func handleComplete(c *gin.Context) {
+	id := c.Param("id")
+	err := completeTask(id)
+	if err == nil {
+		c.JSON(http.StatusOK, "")
+	} else {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusNotFound, id)
 	}
 }
 
 func runServer() {
 	r := gin.Default()
-	r.Use(corsMiddleware())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"PUT"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	r.GET("/tasks", handleGetAll)
 	r.POST("/tasks", handleStore)
+	r.PUT("/tasks/:id/complete", handleComplete)
 
 	r.Run(":8000")
 }
