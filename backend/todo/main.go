@@ -2,13 +2,10 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"net/http"
-	"os"
-	"path"
-	"strconv"
 )
 
 type Task struct {
@@ -26,31 +23,6 @@ var err error
 func dbSetup() (err error) {
 	db, err = sql.Open("mysql", "sample:sample@tcp(db:3306)/sample")
 	return
-}
-
-func getTask(id int) (task Task, err error) {
-	err = db.QueryRow("SELECT * FROM tasks WHERE id = ?", id).Scan(&task.Id, &task.Name, &task.Status)
-	switch {
-	case err == sql.ErrNoRows:
-		fmt.Println("レコードが存在しません")
-		return
-	case err != nil:
-		return
-	default:
-		fmt.Println(task.Id, task.Name, task.Status)
-	}
-	return
-}
-
-func handleGetDetail(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(path.Base(r.URL.Path))
-	task, err := getTask(id)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-	json, _ := json.Marshal(task)
-	w.Write(json)
 }
 
 func getTasks(limit int) (tasks []Task, err error) {
@@ -72,39 +44,47 @@ func getTasks(limit int) (tasks []Task, err error) {
 	return
 }
 
-func handleGetAll(w http.ResponseWriter, r *http.Request) (err error) {
+func handleGetAll(c *gin.Context) {
 	tasks, err := getTasks(30)
-	json, _ := json.Marshal(tasks)
-	w.Write(json)
-	return
+	if err != nil {
+		panic(err.Error())
+	}
+
+	c.JSON(http.StatusOK, tasks)
 }
 
 func storeTask(name string) (err error) {
+	fmt.Println(name)
 	_, err = db.Exec("INSERT INTO tasks(name, status) VALUES (?, 0)", name)
 	return
 }
 
-func handleStore(w http.ResponseWriter, r *http.Request) (err error) {
+func handleStore(c *gin.Context) {
 	var sr StoreRequest
-	json.NewDecoder(r.Body).Decode(&sr)
-	err = storeTask(sr.Name)
+	if c.ShouldBindJSON(&sr) == nil {
+		err = storeTask(sr.Name)
+		c.JSON(http.StatusOK, "")
+	} else {
+		c.JSON(http.StatusInternalServerError, "")
+	}
 	return
 }
 
-func handleRequest(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Content-Type", "application/json")
-	var err error
-	switch r.Method {
-	case "GET":
-		err = handleGetAll(w, r)
-	case "POST":
-		err = handleStore(w, r)
+func corsMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.Next()
 	}
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+}
+
+func runServer() {
+	r := gin.Default()
+	r.Use(corsMiddleware())
+
+	r.GET("/tasks", handleGetAll)
+	r.POST("/tasks", handleStore)
+
+	r.Run(":8000")
 }
 
 func main() {
@@ -112,8 +92,5 @@ func main() {
 	// main() 終了時にDBをClseする.
 	defer db.Close()
 
-	http.HandleFunc("/tasks", handleRequest)
-
-	fmt.Fprintln(os.Stdout, "Listening...")
-	http.ListenAndServe(":8000", nil)
+	runServer()
 }
