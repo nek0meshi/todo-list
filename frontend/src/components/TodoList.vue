@@ -8,11 +8,11 @@
       <div class="item-text">
         {{ task.name }}
       </div>
-      <button class="btn edit-btn">
+      <button class="btn edit-btn button is-light">
         編集する
       </button>
       <button
-        class="btn complete-btn"
+        class="btn complete-btn button is-primary"
         @click="complete(task.id)"
       >
         完了
@@ -22,7 +22,7 @@
       class="item-wrapper"
     >
       <input v-model="addInputText" type="text" class="add-input-field">
-      <button class="btn add-btn" @click="add">
+      <button class="btn add-btn button is-success" @click="add">
         + タスクを追加する
       </button>
     </div>
@@ -31,6 +31,7 @@
 
 <script>
 import * as tasksApi from '../api/tasks'
+import '../../node_modules/bulma/css/bulma.css'
 
 const STATUS_TODO = 0 // 未完了
 const STATUS_DONE = 1 // 完了
@@ -106,7 +107,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  height: 32px;
+  height: 54px;
   margin-top: 20px;
   padding: 10px;
   border: 1px solid #333;
