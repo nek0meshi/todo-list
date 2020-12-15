@@ -94,7 +94,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .list {
   display: flex;
   flex-direction: column;
@@ -111,10 +111,10 @@ export default {
   padding: 10px;
   border: 1px solid #333;
   font-size: 16px;
-}
-.item-wrapper > div,
-.item-wrapper > button {
-  height: 32px;
+  > div,
+  > button {
+    height: 32px;
+  }
 }
 .item-text {
   flex: 1;
