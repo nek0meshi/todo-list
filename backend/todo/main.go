@@ -86,6 +86,23 @@ func handleComplete(c *gin.Context) {
 	}
 }
 
+func updateTask(id string, name string) (err error) {
+	_, err = db.Exec("UPDATE tasks SET name = ? WHERE id = ?", name, id)
+	return
+}
+
+func handleUpdate(c *gin.Context) {
+	id := c.Param("id")
+	name := c.PostForm("name")
+	err := updateTask(id, name)
+	if err == nil {
+		c.JSON(http.StatusOK, "")
+	} else {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusNotFound, id)
+	}
+}
+
 func runServer() {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
@@ -98,6 +115,7 @@ func runServer() {
 
 	r.GET("/tasks", handleGetAll)
 	r.POST("/tasks", handleStore)
+	r.PUT("/tasks/:id", handleUpdate)
 	r.PUT("/tasks/:id/complete", handleComplete)
 
 	r.Run(":8000")
@@ -105,7 +123,7 @@ func runServer() {
 
 func main() {
 	_ = dbSetup()
-	// main() 終了時にDBをClseする.
+	// main() 終了時にDBをCloseする.
 	defer db.Close()
 
 	runServer()
