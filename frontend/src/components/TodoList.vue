@@ -35,30 +35,12 @@ import * as tasksApi from '../api/tasks'
 const STATUS_TODO = 0 // 未完了
 const STATUS_DONE = 1 // 完了
 
-const DUMMY_LIST = [
-  {
-    id: 1,
-    name: 'タスク1',
-    status: STATUS_TODO,
-  },
-  {
-    id: 2,
-    name: 'タスク2',
-    status: STATUS_TODO,
-  },
-  {
-    id: 3,
-    name: 'タスク3',
-    status: STATUS_TODO,
-  },
-]
-
 export default {
   name: 'TodoList',
 
   data () {
     return {
-      list: DUMMY_LIST,
+      list: [],
       addInputText: '',
     }
   },
@@ -100,10 +82,14 @@ export default {
         console.error(err)
       }
     },
-    complete(id) {
-      // $setしなくても反映されるようになった？
-      this.list.find(l => l.id === id).status = STATUS_DONE;
-    }
+    async complete(id) {
+      try {
+        const res = await tasksApi.complete(id)
+        this.getAll()
+      } catch (err) {
+        console.error(err)
+      }
+    },
   },
 }
 </script>
