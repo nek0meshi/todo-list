@@ -2,22 +2,18 @@ version: '3'
 
 services:
   frontend:
-    image: node:14-alpine
+    build:
+      context: .
+      dockerfile: ./docker/prod/frontend/Dockerfile
     ports:
-      - 3000:3000
-    volumes:
-      - ./frontend:/frontend:cached
-    tty: true
-    working_dir: /frontend
+      - 3000:80
 
   backend:
-    build: ./docker/dev/backend
+    build:
+      context: .
+      dockerfile: ./docker/prod/backend/Dockerfile
     ports:
       - 8000:8000
-    volumes:
-      - ./backend:/go/src/app:cached
-    tty: true
-    working_dir: /go/src
 
   db:
     image: mysql:8

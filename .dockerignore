@@ -1,0 +1,7 @@
+.dockerignore
+.git
+.gitignore
+docker-compose.yml
+frontend/node_modules
+Makefile
+README.md
