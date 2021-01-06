@@ -1,6 +1,7 @@
 FRONTEND_CONTAINER_NAME := frontend
 BACKEND_CONTAINER_NAME := backend
 DB_CONTAINER_NAME := db
+PROD_PROJECT_NAME := todo-list-prod
 
 .PHONY: up
 up:
@@ -49,6 +50,27 @@ run-backend:
 .PHONY: db-setup
 db-setup:
 	docker-compose exec ${DB_CONTAINER_NAME} sh -c 'exec mysql -u sample -p sample < ./sql/setup.sql'
+
+.PHONY: prod-up
+prod-up:
+	docker-compose -p ${PROD_PROJECT_NAME} -f docker-compose-prod.yml up
+
+.PHONY: prod-build
+prod-build:
+	docker-compose -p ${PROD_PROJECT_NAME} -f docker-compose-prod.yml build
+
+.PHONY: prod-down
+prod-down:
+	docker-compose -p ${PROD_PROJECT_NAME} down
+
+.PHONY: prod-db-setup
+prod-db-setup:
+	docker-compose -p ${PROD_PROJECT_NAME} exec ${DB_CONTAINER_NAME} sh -c 'exec mysql -u sample -p sample < ./sql/setup.sql'
+
+.PHONY: prod-f-sh
+prod-f-sh:
+	docker-compose -p ${PROD_PROJECT_NAME} exec ${FRONTEND_CONTAINER_NAME} sh
+
 
 .PHONY: create-project
 create-project:
