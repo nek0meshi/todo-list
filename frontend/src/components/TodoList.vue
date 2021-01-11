@@ -84,10 +84,7 @@ export default {
       this.showEditModal = true
     },
     saveEdit({ text }) {
-      console.log({
-        id: this.editId,
-        text,
-      })
+      this.update(this.editId, text)
       this.showEditModal = false
     },
     async getAll() {
@@ -121,6 +118,14 @@ export default {
         console.error(err)
       }
     },
+    async update(id, text) {
+      try {
+        const res = await tasksApi.update(id, { name: text })
+        this.getAll()
+      } catch (err) {
+        console.error(err)
+      }
+    }
   },
 }
 </script>
