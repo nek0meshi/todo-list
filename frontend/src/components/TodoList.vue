@@ -8,7 +8,10 @@
       <div class="item-text">
         {{ task.name }}
       </div>
-      <button class="btn edit-btn button is-light">
+      <button
+        class="btn edit-btn button is-light"
+        @click="edit(task.id)"
+      >
         編集する
       </button>
       <button
@@ -26,12 +29,19 @@
         + タスクを追加する
       </button>
     </div>
+    <EditModal
+      :show="showEditModal"
+      :text="editText"
+      @save="saveEdit"
+      @close="showEditModal = false"
+    />
   </div>
 </template>
 
 <script>
 import * as tasksApi from '../api/tasks'
 import '../../node_modules/bulma/css/bulma.css'
+import EditModal from './EditModal.vue'
 
 const STATUS_TODO = 0 // 未完了
 const STATUS_DONE = 1 // 完了
@@ -39,10 +49,16 @@ const STATUS_DONE = 1 // 完了
 export default {
   name: 'TodoList',
 
+  components: {
+    EditModal,
+  },
+
   data () {
     return {
       list: [],
       addInputText: '',
+      showEditModal: false,
+      editId: null,
     }
   },
 
@@ -52,6 +68,9 @@ export default {
     },
     listToShow () {
       return this.list.filter(l => l.status === STATUS_TODO);
+    },
+    editText() {
+      return this.list.find(({ id }) => id === this.editId)?.name
     }
   },
 
@@ -60,6 +79,14 @@ export default {
   },
 
   methods: {
+    edit(id) {
+      this.editId = id
+      this.showEditModal = true
+    },
+    saveEdit({ text }) {
+      this.update(this.editId, text)
+      this.showEditModal = false
+    },
     async getAll() {
       try {
         const res = await tasksApi.getAll()
@@ -91,6 +118,14 @@ export default {
         console.error(err)
       }
     },
+    async update(id, text) {
+      try {
+        const res = await tasksApi.update(id, { name: text })
+        this.getAll()
+      } catch (err) {
+        console.error(err)
+      }
+    }
   },
 }
 </script>

@@ -17,6 +17,9 @@ type Task struct {
 type StoreRequest struct {
 	Name string `json:"name"`
 }
+type UpdateRequest struct {
+	Name string `json:"name"`
+}
 
 var db *sql.DB
 var err error
@@ -86,18 +89,36 @@ func handleComplete(c *gin.Context) {
 	}
 }
 
+func updateTask(id string, name string) (err error) {
+	_, err = db.Exec("UPDATE tasks SET name = ? WHERE id = ?", name, id)
+	return
+}
+
+func handleUpdate(c *gin.Context) {
+	id := c.Param("id")
+	var sr UpdateRequest
+	if c.ShouldBindJSON(&sr) == nil {
+		err = updateTask(id, sr.Name)
+		c.JSON(http.StatusOK, "")
+	} else {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, "")
+	}
+}
+
 func runServer() {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
-		AllowMethods:     []string{"PUT"},
-		AllowHeaders:     []string{"Origin"},
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"PUT", "DELETE"},
+		AllowHeaders:     []string{"*"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
 
 	r.GET("/tasks", handleGetAll)
 	r.POST("/tasks", handleStore)
+	r.PUT("/tasks/:id/update", handleUpdate)
 	r.PUT("/tasks/:id/complete", handleComplete)
 
 	r.Run(":8000")
@@ -105,7 +126,7 @@ func runServer() {
 
 func main() {
 	_ = dbSetup()
-	// main() 終了時にDBをClseする.
+	// main() 終了時にDBをCloseする.
 	defer db.Close()
 
 	runServer()
