@@ -21,6 +21,8 @@ services:
 
   db:
     image: mysql:8
+    # M1 Mac用
+    platform: linux/x86_64
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: sample
