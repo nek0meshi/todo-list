@@ -45,7 +45,7 @@ run-hello-world:
 
 .PHONY: run-backend
 run-backend:
-	docker-compose exec ${BACKEND_CONTAINER_NAME} sh -c "go run ./app/todo"
+	docker-compose exec ${BACKEND_CONTAINER_NAME} sh -c "cd ./app/todo && go run ."
 
 .PHONY: db-setup
 db-setup:
