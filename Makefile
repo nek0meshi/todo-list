@@ -49,7 +49,7 @@ run-backend:
 
 .PHONY: db-setup
 db-setup:
-	docker compose exec ${DB_CONTAINER_NAME} sh -c 'exec mysql -u sample -p sample < ./sql/setup.sql'
+	docker compose exec ${DB_CONTAINER_NAME} sh -c 'exec mysql -u sample -psample sample < ./sql/setup.sql'
 
 .PHONY: prod-up
 prod-up:
@@ -65,7 +65,7 @@ prod-down:
 
 .PHONY: prod-db-setup
 prod-db-setup:
-	docker compose -p ${PROD_PROJECT_NAME} exec ${DB_CONTAINER_NAME} sh -c 'exec mysql -u sample -p sample < ./sql/setup.sql'
+	docker compose -p ${PROD_PROJECT_NAME} exec ${DB_CONTAINER_NAME} sh -c 'exec mysql -u sample -psample sample < ./sql/setup.sql'
 
 .PHONY: prod-f-sh
 prod-f-sh:
