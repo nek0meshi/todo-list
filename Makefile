@@ -37,11 +37,7 @@ yarn:
 
 .PHONY: go-fmt
 go-fmt:
-	docker compose exec ${BACKEND_CONTAINER_NAME} go fmt ./app/todo
-
-.PHONY: run-backend
-run-backend:
-	docker compose exec ${BACKEND_CONTAINER_NAME} sh -c "cd ./app/todo && go run ."
+	docker compose exec ${BACKEND_CONTAINER_NAME} go fmt .
 
 .PHONY: db-setup
 db-setup:
@@ -66,7 +62,6 @@ prod-db-setup:
 .PHONY: prod-f-sh
 prod-f-sh:
 	docker compose -p ${PROD_PROJECT_NAME} exec ${FRONTEND_CONTAINER_NAME} sh
-
 
 .PHONY: create-project
 create-project:

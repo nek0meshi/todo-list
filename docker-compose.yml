@@ -17,7 +17,7 @@ services:
     volumes:
       - ./backend:/go/src/app:cached
     tty: true
-    working_dir: /go/src
+    working_dir: /go/src/app/todo
 
   db:
     image: mysql:8
