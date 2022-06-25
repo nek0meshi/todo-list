@@ -39,10 +39,6 @@ yarn:
 go-fmt:
 	docker compose exec ${BACKEND_CONTAINER_NAME} go fmt ./app/todo
 
-.PHONY: run-hello-world
-run-hello-world:
-	docker compose exec ${BACKEND_CONTAINER_NAME} sh -c "go install ./app/hello_world && ../bin/hello_world"
-
 .PHONY: run-backend
 run-backend:
 	docker compose exec ${BACKEND_CONTAINER_NAME} sh -c "cd ./app/todo && go run ."
