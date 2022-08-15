@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build"
+    "build": "vite build",
+    "eslint": "eslint --ext \".js,.ts,.vue\" .",
+    "eslint:fix": "eslint --ext \".js,.ts,.vue\" --fix ."
   },
   "dependencies": {
     "vue": "^3.2.37"
