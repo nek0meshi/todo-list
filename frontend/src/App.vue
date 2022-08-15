@@ -1,14 +1,14 @@
 <template>
-  <Page />
+  <TopPage />
 </template>
 
 <script>
-import Page from './components/Page.vue'
+import TopPage from './components/TopPage.vue'
 
 export default {
   name: 'App',
   components: {
-    Page,
+    TopPage,
   },
 }
 </script>
