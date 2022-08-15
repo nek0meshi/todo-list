@@ -4,10 +4,14 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
+    "lint": "npm run eslint && npm run stylelint && npm run prettier",
+    "lint:fix": "npm run eslint:fix && npm run stylelint:fix && npm run prettier:fix",
     "eslint": "eslint --ext \".js,.ts,.vue\" .",
     "eslint:fix": "eslint --ext \".js,.ts,.vue\" --fix .",
     "stylelint": "stylelint \"**/*.{vue,scss}\"",
-    "stylelint:fix": "stylelint \"**/*.{vue,scss}\" --fix"
+    "stylelint:fix": "stylelint \"**/*.{vue,scss}\" --fix",
+    "prettier": "prettier -c .",
+    "prettier:fix": "prettier -w ."
   },
   "dependencies": {
     "vue": "^3.2.37"
