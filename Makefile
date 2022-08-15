@@ -20,11 +20,11 @@ build:
 
 .PHONY: b-sh
 b-sh:
-	docker compose exec ${BACKEND_CONTAINER_NAME} sh
+	docker compose exec ${BACKEND_CONTAINER_NAME} bash
 
 .PHONY: d-sh
 d-sh:
-	docker compose exec ${DB_CONTAINER_NAME} sh
+	docker compose exec ${DB_CONTAINER_NAME} bash
 
 .PHONY: yarn
 yarn:
