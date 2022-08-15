@@ -17,5 +17,5 @@ export function update(id, data) {
 }
 
 function baseUrl() {
-  return 'http://localhost:8000/tasks';
+  return 'http://localhost:8000/tasks'
 }

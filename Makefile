@@ -1,4 +1,3 @@
-FRONTEND_CONTAINER_NAME := frontend
 BACKEND_CONTAINER_NAME := backend
 DB_CONTAINER_NAME := db
 PROD_PROJECT_NAME := todo-list-prod
@@ -19,29 +18,21 @@ down-v:
 build:
 	docker compose build
 
-.PHONY: f-sh
-f-sh:
-	docker compose exec ${FRONTEND_CONTAINER_NAME} sh
-
 .PHONY: b-sh
 b-sh:
-	docker compose exec ${BACKEND_CONTAINER_NAME} sh
+	docker compose exec ${BACKEND_CONTAINER_NAME} bash
 
 .PHONY: d-sh
 d-sh:
-	docker compose exec ${DB_CONTAINER_NAME} sh
+	docker compose exec ${DB_CONTAINER_NAME} bash
 
 .PHONY: yarn
 yarn:
-	docker compose exec ${FRONTEND_CONTAINER_NAME} sh -c "yarn && yarn dev"
+	cd frontend && yarn && yarn dev
 
 .PHONY: go-fmt
 go-fmt:
-	docker compose exec ${BACKEND_CONTAINER_NAME} go fmt ./app/todo
-
-.PHONY: run-backend
-run-backend:
-	docker compose exec ${BACKEND_CONTAINER_NAME} sh -c "cd ./app/todo && go run ."
+	docker compose exec ${BACKEND_CONTAINER_NAME} go fmt .
 
 .PHONY: db-setup
 db-setup:
@@ -66,7 +57,6 @@ prod-db-setup:
 .PHONY: prod-f-sh
 prod-f-sh:
 	docker compose -p ${PROD_PROJECT_NAME} exec ${FRONTEND_CONTAINER_NAME} sh
-
 
 .PHONY: create-project
 create-project:

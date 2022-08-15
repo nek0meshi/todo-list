@@ -1,7 +1,5 @@
-FROM golang:1-alpine
+FROM golang:1.18
 
-RUN apk add --no-cache git
+RUN go install github.com/pilu/fresh@latest
 
-RUN go get -u github.com/go-sql-driver/mysql \
-  github.com/gin-gonic/gin \
-  github.com/gin-contrib/cors
+CMD ["fresh"]
