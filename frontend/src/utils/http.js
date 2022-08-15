@@ -6,13 +6,14 @@ export default {
   get(url, params = {}, options = {}) {
     const urlWithParams = new URL(url)
 
-    Object.entries(params)
-      .forEach(([key, value]) => urlWithParams.searchParams.append(key, value))
+    Object.entries(params).forEach(([key, value]) =>
+      urlWithParams.searchParams.append(key, value)
+    )
 
     return fetch(urlWithParams, {
       method: 'GET',
-      ...options
-    });
+      ...options,
+    })
   },
 
   post(url, body = {}, options = {}) {
@@ -20,7 +21,7 @@ export default {
       method: 'POST',
       body,
       headers: DEFAULT_HEADERS,
-      ...options
+      ...options,
     })
   },
 
@@ -29,14 +30,14 @@ export default {
       method: 'PUT',
       body,
       headers: DEFAULT_HEADERS,
-      ...options
+      ...options,
     })
   },
 
   delete(url = {}, options = {}) {
     return fetch(url, {
       method: 'DELETE',
-      ...options
+      ...options,
     })
-  }
+  },
 }

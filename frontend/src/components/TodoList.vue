@@ -1,17 +1,10 @@
 <template>
   <div class="list">
-    <div
-      v-for="task in listToShow"
-      :key="task.id"
-      class="item-wrapper"
-    >
+    <div v-for="task in listToShow" :key="task.id" class="item-wrapper">
       <div class="item-text">
         {{ task.name }}
       </div>
-      <button
-        class="btn edit-btn button is-light"
-        @click="edit(task.id)"
-      >
+      <button class="btn edit-btn button is-light" @click="edit(task.id)">
         編集する
       </button>
       <button
@@ -21,10 +14,8 @@
         完了
       </button>
     </div>
-    <div
-      class="item-wrapper"
-    >
-      <input v-model="addInputText" type="text" class="add-input-field">
+    <div class="item-wrapper">
+      <input v-model="addInputText" type="text" class="add-input-field" />
       <button class="btn add-btn button is-success" @click="add">
         + タスクを追加する
       </button>
@@ -53,7 +44,7 @@ export default {
     EditModal,
   },
 
-  data () {
+  data() {
     return {
       list: [],
       addInputText: '',
@@ -63,15 +54,15 @@ export default {
   },
 
   computed: {
-    nextId () {
-      return Math.max(...this.list.map(l => l.id)) + 1
+    nextId() {
+      return Math.max(...this.list.map((l) => l.id)) + 1
     },
-    listToShow () {
-      return this.list.filter(l => l.status === STATUS_TODO);
+    listToShow() {
+      return this.list.filter((l) => l.status === STATUS_TODO)
     },
     editText() {
       return this.list.find(({ id }) => id === this.editId)?.name
-    }
+    },
   },
 
   created() {
@@ -90,7 +81,7 @@ export default {
     async getAll() {
       try {
         const res = await tasksApi.getAll()
-        this.list = await res.json();
+        this.list = await res.json()
       } catch (err) {
         console.error(err)
       }
@@ -125,7 +116,7 @@ export default {
       } catch (err) {
         console.error(err)
       }
-    }
+    },
   },
 }
 </script>

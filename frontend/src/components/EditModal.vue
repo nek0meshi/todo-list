@@ -4,18 +4,10 @@
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">タスクを編集</p>
-        <button
-          class="delete"
-          aria-label="close"
-          @click="close"
-        ></button>
+        <button class="delete" aria-label="close" @click="close"></button>
       </header>
       <section class="modal-card-body">
-        <input
-          type="text"
-          class="input"
-          v-model="innerText"
-        >
+        <input type="text" class="input" v-model="innerText" />
       </section>
       <footer class="modal-card-foot">
         <button class="button is-success" @click="save">保存</button>
@@ -35,7 +27,7 @@ export default {
     text: {
       type: String,
       default: '',
-    }
+    },
   },
 
   data() {
@@ -49,18 +41,18 @@ export default {
       if (val) {
         this.innerText = this.text
       }
-    }
+    },
   },
 
   methods: {
     save() {
       this.$emit('save', {
-        text: this.innerText
+        text: this.innerText,
       })
     },
     close() {
       this.$emit('close')
     },
-  }
+  },
 }
 </script>
